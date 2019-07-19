@@ -10,7 +10,7 @@ class build_ext_first(build_py_orig):
 if sys.platform.startswith("linux"):
     module = Extension(
         "_pymupdf",
-        ["pymupdf.i"],
+        ["pymupdf.i", "pymupdf.c"],
         include_dirs=[
             "/usr/local/include/mupdf",
         ],
