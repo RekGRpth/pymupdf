@@ -1,14 +1,5 @@
 #include <mupdf/fitz.h>
-#include <string.h>
 #include <Python.h>
-
-/*static void pg_mupdf_error_callback(void *user, const char *message) {
-    ereport(WARNING, (errmsg("%s", message)));
-}
-
-static void pg_mupdf_warning_callback(void *user, const char *message) {
-    ereport(WARNING, (errmsg("%s", message)));
-}*/
 
 static void runpage(fz_context *ctx, fz_document *doc, int number, fz_document_writer *wri) {
     fz_page *page = fz_load_page(ctx, doc, number - 1);
@@ -40,15 +31,12 @@ static void runrange(fz_context *ctx, fz_document *doc, const char *range, fz_do
 }
 
 PyObject *mupdf(PyObject *data, const char *input_type, const char *output_type, const char *options, const char *range) {
-//    const char *output_data = NULL;
     PyObject *bytes = PyBytes_FromString("");
     char *input_data;
     Py_ssize_t input_len;
     if (PyBytes_AsStringAndSize(data, &input_data, &input_len)) goto ret;
     fz_context *ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
     if (!ctx) goto ret;
-//    fz_set_error_callback(ctx, pg_mupdf_error_callback, r->connection->log);
-//    fz_set_warning_callback(ctx, pg_mupdf_warning_callback, r->connection->log);
     fz_buffer *output_buffer = NULL;// fz_var(output_buffer);
     fz_buffer *input_buffer = NULL;// fz_var(input_buffer);
     fz_document *doc = NULL;// fz_var(doc);
@@ -68,21 +56,14 @@ PyObject *mupdf(PyObject *data, const char *input_type, const char *output_type,
         if (wri) fz_drop_document_writer(ctx, wri);
         if (doc) fz_drop_document(ctx, doc);
         if (input_buffer) fz_drop_buffer(ctx, input_buffer);
-//        if (output_buffer) output_data = fz_string_from_buffer(ctx, output_buffer);
     } fz_catch(ctx) {
         goto fz_drop_context;
     }
     unsigned char *output_data = NULL;
     size_t output_len = fz_buffer_storage(ctx, output_buffer, &output_data);
-//    ret = PyByteArray_FromStringAndSize((const char *)output_data, output_len);
     bytes = PyBytes_FromStringAndSize((const char *)output_data, (Py_ssize_t)output_len);
 fz_drop_context:
     fz_drop_context(ctx);
 ret:
     return bytes;
 }
-
-/*int fact(int n) {
-    if (n <= 1) return 1;
-    else return n*fact(n-1);
-}*/
