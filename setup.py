@@ -21,6 +21,7 @@ if sys.platform.startswith("linux"):
     )
 
 setup(
+    name="pymupdf",
     url="https://github.com/RekGRpth/pymupdf",
     cmdclass={"build_py": build_ext_first},
     ext_modules=[module],
