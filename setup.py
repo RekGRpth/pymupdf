@@ -20,7 +20,6 @@ if sys.platform.startswith("linux"):
             'jbig2dec',
             'jpeg',
             "mupdf",
-#            "mupdf-third",
             'mupdfthird',
             'openjp2',
         ],
