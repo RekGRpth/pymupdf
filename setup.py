@@ -15,8 +15,14 @@ if sys.platform.startswith("linux"):
             "/usr/local/include/mupdf",
         ],
         libraries=[
+            'freetype',
+            'harfbuzz',
+            'jbig2dec',
+            'jpeg',
             "mupdf",
             "mupdf-third",
+            'mupdfthird',
+            'openjp2',
         ],
     )
 
