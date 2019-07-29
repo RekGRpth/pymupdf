@@ -37,6 +37,7 @@ PyObject *mupdf(PyObject *data, const char *input_type, const char *output_type,
     if (PyBytes_AsStringAndSize(data, &input_data, &input_len)) goto ret;
     fz_context *ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
     if (!ctx) goto ret;
+    fz_stream *input_stream = NULL;
     fz_buffer *output_buffer = NULL;// fz_var(output_buffer);
     fz_document *doc = NULL;// fz_var(doc);
     fz_document_writer *wri = NULL;// fz_var(wri);
@@ -45,7 +46,7 @@ PyObject *mupdf(PyObject *data, const char *input_type, const char *output_type,
         fz_set_use_document_css(ctx, 1);
         output_buffer = fz_new_buffer(ctx, 0);
         fz_set_user_context(ctx, output_buffer);
-        fz_stream *input_stream = fz_open_memory(ctx, (unsigned char *)input_data, input_len);
+        input_stream = fz_open_memory(ctx, (unsigned char *)input_data, input_len);
         doc = fz_open_document_with_stream(ctx, input_type, input_stream);
         wri = fz_new_document_writer(ctx, "buf:", output_type, options);
         runrange(ctx, doc, range, wri);
@@ -53,6 +54,7 @@ PyObject *mupdf(PyObject *data, const char *input_type, const char *output_type,
         if (wri) fz_close_document_writer(ctx, wri);
         if (wri) fz_drop_document_writer(ctx, wri);
         if (doc) fz_drop_document(ctx, doc);
+        if (input_stream) fz_drop_stream(ctx, input_stream);
     } fz_catch(ctx) {
         goto fz_drop_context;
     }
