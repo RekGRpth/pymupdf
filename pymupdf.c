@@ -62,6 +62,7 @@ PyObject *mupdf(PyObject *data, const char *input_type, const char *output_type,
     size_t output_len = fz_buffer_storage(ctx, buf, &output_data);
     bytes = PyBytes_FromStringAndSize((const char *)output_data, (Py_ssize_t)output_len);
 fz_drop_context:
+    if (buf) fz_drop_buffer(ctx, buf);
     fz_drop_context(ctx);
 ret:
     return bytes;
